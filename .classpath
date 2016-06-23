@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Java3DLib"/>
-	<classpathentry kind="lib" path="/home/liss/Downloads/mason.19.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/liss/workspace/mason.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

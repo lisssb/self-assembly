@@ -19,9 +19,9 @@ public class TRS extends SimState {
 	
 //	public Object space;
 	public Continuous2D yard = new Continuous2D(1.0,100,100);
-	public int numRobots = 52;
+	public int numRobots = 10;
 	public static int robot_width = 2;
-	public double gradientDistance = robot_width;
+	public double gradientDistance = robot_width - 0.3;
 	public BufferedImage map;
 	public String imgFile = "prueba1.png";
 	
@@ -33,8 +33,19 @@ public class TRS extends SimState {
 
 	public static void main(String[] args)
 	{
-		doLoop(TRS.class, args);
+//		doLoop(TRS.class, args);
+//		System.exit(0);
+		
+		SimState state = new TRS(System.currentTimeMillis());
+		state.start();
+		do
+			{System.out.println("nuevop ccyle" );
+			if (!state.schedule.step(state)) break;}
+		while(state.schedule.getSteps() < 4);
+		state.finish();
 		System.exit(0);
+		
+		
 	}
 	
 	private BufferedImage getImage(String filename)
@@ -95,9 +106,8 @@ public class TRS extends SimState {
 				break;
 			}
 		}
-		System.out.println("antes");
 		map = getImage("/resources/" + imgFile);
-		System.out.println(map.getWidth() + " " + map.getHeight());
+//		System.out.println(map.getWidth() + " " + map.getHeight());
 		
 	}
 	
@@ -118,7 +128,9 @@ public class TRS extends SimState {
 		if(isSeed){
 			robot.localization = new MutableDouble2D(position.getX()-yard.getWidth()*0.5, position.getY()-yard.getHeight());
 			robot.isLocalized = true;
+			robot.validGradient = true;
 		}
+		robot.setOrientation(random.nextDouble() * 6.28319);
 	}
 	
 	/**
