@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+
 import sim.engine.*;
 import sim.display.*;
 import sim.portrayal.DrawInfo2D;
@@ -53,7 +54,28 @@ public class TRSWithUI extends GUIState
 						new OrientedPortrayal2D(
 						new CircledPortrayal2D(
 								new LabelledPortrayal2D(										
-											new OvalPortrayal2D(Color.gray, swarm.robot_width, true),											
+											new OvalPortrayal2D(Color.gray, swarm.robot_width, true){
+												public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+												{
+													Robot robot = (Robot)object;
+													if (robot.id==0)
+														paint = Color.pink;
+													else if(robot.id == 1 || robot.id == 2 || robot.id ==3){
+														paint = Color.cyan;
+													}
+													else if(!robot.isStationary){
+														paint = Color.orange;
+													}
+//													else if (robot.isStationary)
+//														paint = Color.black;
+//													else if (!robot.validGradient)
+//														paint = Color.orange;
+													else
+														paint = Color.gray;
+													super.draw(object, graphics, info);
+												}
+									
+											},											
 										5.0, null, Color.black, true),
 								0, 5.0, Color.blue, true),
 						0, 5.0, Color.red)));
