@@ -33,17 +33,17 @@ public class TRS extends SimState {
 
 	public static void main(String[] args)
 	{
-//		doLoop(TRS.class, args);
-//		System.exit(0);
-		
-		SimState state = new TRS(System.currentTimeMillis());
-		state.start();
-		do
-			{System.out.println("nuevop ccyle" );
-			if (!state.schedule.step(state)) break;}
-		while(state.schedule.getSteps() < 4);
-		state.finish();
+		doLoop(TRS.class, args);
 		System.exit(0);
+		
+//		SimState state = new TRS(System.currentTimeMillis());
+//		state.start();
+//		do
+//			{System.out.println("nuevop ccyle" );
+//			if (!state.schedule.step(state)) break;}
+//		while(state.schedule.getSteps() < 40);
+//		state.finish();
+//		System.exit(0);
 		
 		
 	}
@@ -85,8 +85,8 @@ public class TRS extends SimState {
 		
 		createRobot(0, true, new Double2D(yard.getWidth() * 0.5 + 0, yard.getHeight() * 0.5 + 0));
 		createRobot(1, true, new Double2D(yard.getWidth() * 0.5 + robot_width, yard.getHeight() * 0.5 ));
-		createRobot(2, true, new Double2D(yard.getWidth() * 0.5 + robot_width/2, yard.getHeight() * 0.5 - robot_width));
-		createRobot(3, true, new Double2D(yard.getWidth() * 0.5 + robot_width/2, yard.getHeight() * 0.5 + robot_width));
+		createRobot(3, true, new Double2D(yard.getWidth() * 0.5 + robot_width/2, yard.getHeight() * 0.5 - robot_width));
+		createRobot(2, true, new Double2D(yard.getWidth() * 0.5 + robot_width/2, yard.getHeight() * 0.5 + robot_width));
 		
 		
 		int width = (int)Math.round(Math.sqrt(numRobots - 4));
@@ -126,9 +126,12 @@ public class TRS extends SimState {
 		schedule.scheduleRepeating(robot);
 //		robot.position = new MutableDouble2D(position);
 		if(isSeed){
-			robot.localization = new MutableDouble2D(position.getX()-yard.getWidth()*0.5, position.getY()-yard.getHeight());
+			robot.localization = new MutableDouble2D(position.getX()-yard.getWidth()*0.5, yard.getHeight()*0.5 - position.getY());
 			robot.isLocalized = true;
 			robot.validGradient = true;
+			
+//			System.out.println("Iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii :: " +  id);
+//			System.out.println("localization :: " + robot.localization);
 		}
 		robot.setOrientation(random.nextDouble() * 6.28319);
 	}
