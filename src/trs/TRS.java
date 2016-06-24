@@ -21,7 +21,7 @@ public class TRS extends SimState {
 	public Continuous2D yard = new Continuous2D(1.0,100,100);
 	public int numRobots = 10;
 	public static int robot_width = 2;
-	public double gradientDistance = robot_width - 0.3;
+	public double gradientDistance = robot_width + 0.3;
 	public BufferedImage map;
 	public String imgFile = "prueba1.png";
 	
@@ -133,7 +133,7 @@ public class TRS extends SimState {
 //			System.out.println("Iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii :: " +  id);
 //			System.out.println("localization :: " + robot.localization);
 		}
-		robot.setOrientation(random.nextDouble() * 6.28319);
+		robot.setOrientation(random.nextDouble() * 4.1888);
 	}
 	
 	/**
@@ -142,12 +142,15 @@ public class TRS extends SimState {
 	 * @return is the given point is inside the coordinates of the shape.
 	 * This mean if his position correspond to a black coordinate
 	 */
-	public boolean isInsideShape(Double2D point)
+	public boolean isInsideShape(Double2D point, int id)
 	{
-		int x = (int) (point.x - yard.getWidth()*0.5);
-		int y = (int) (point.y - yard.getHeight()*0.5);
+		int x = (int) (point.x - yard.getWidth()*0.5 );
+		int y = (int) ( yard.getHeight()*0.5 - point.y);
+		x = x/TRS.robot_width;
+		y = y /TRS.robot_width;
+//		System.out.println("id :: " + id + "x : "+ x + " y:: "+ y);
 		
-		if (x < 0 || y < 0 || x >= map.getWidth() || y >= map.getHeight())
+		if (x <= 0 || y <= 0 || x >= map.getWidth() || y >= map.getHeight())
 			return false;
 		else
 			if (map.getRGB(x, y) == Color.black.getRGB())
@@ -155,4 +158,5 @@ public class TRS extends SimState {
 			else 
 				return false;
 	}
+	
 }
