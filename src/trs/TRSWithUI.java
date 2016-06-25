@@ -50,7 +50,7 @@ public class TRSWithUI extends GUIState
 		// tell the portrayals what to portray and how to portray them
 		yardPortrayal.setField( swarm.yard );
 		yardPortrayal.setPortrayalForAll(
-				new MovablePortrayal2D(
+//				new MovablePortrayal2D(
 						new OrientedPortrayal2D(
 						new CircledPortrayal2D(
 								new LabelledPortrayal2D(										
@@ -66,6 +66,9 @@ public class TRSWithUI extends GUIState
 													else if(!robot.isStationary){
 														paint = Color.orange;
 													}
+													else if(robot.state == State.JOINED_SHAPE){
+														paint = Color.blue;
+													}
 //													else if (robot.isStationary)
 //														paint = Color.black;
 //													else if (!robot.validGradient)
@@ -78,7 +81,7 @@ public class TRSWithUI extends GUIState
 											},											
 										5.0, null, Color.black, true),
 								0, 5.0, Color.blue, true),
-						0, 5.0, Color.red)));
+						0, 5.0, Color.red));
 		// reschedule the displayer
 		
 		display.reset();

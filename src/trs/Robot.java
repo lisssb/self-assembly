@@ -53,6 +53,7 @@ public class Robot  implements Steppable{
 	public int getGradientValue () {return gradientValue;}
 	public boolean getIfValidGradient () {return validGradient;}
 	public State getState () {return state;}
+	public boolean getIsMoving() {return !isStationary;}
 	public int getId () {return id;}
 	public boolean getIfLocalized() {return isLocalized;}
 	public void setOrientation(double o) {orientation = o;}
@@ -197,6 +198,7 @@ public class Robot  implements Steppable{
 			}
 			
 			if(!neighbours_moving){
+				System.out.println("este es mi id" + id);
 				h = max_neighbour_gradient;
 				
 				if(gradientValue > h || (gradientValue == h && id > max_neighbour_id)){
@@ -215,6 +217,11 @@ public class Robot  implements Steppable{
 				followEdge();
 				//!111111111111111111
 			}
+			else{
+				state = State.MOVE_WHILE_INSIDE;
+				isStationary = false;
+
+			}
 		}
 		else if(state == State.MOVE_WHILE_INSIDE){/// edge-follow while inside desired shape
 			System.out.println("is " + id + " 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999");
@@ -222,16 +229,23 @@ public class Robot  implements Steppable{
 			if(!swarm.isInsideShape(yard.getObjectLocation(this), id)){
 				System.out.println("ESTOY EN JOINED 1");
 				state = State.JOINED_SHAPE;
+				isStationary = true;
 			}
 			
 			else if(gradientValue <= ver){
 				state = State.JOINED_SHAPE;
+				isStationary = true;
 				System.out.println("Soy : " + id + " mi gradiente es : " + gradientValue + " y mycloser es : " + ver);
 				System.out.println("ESTOY EN JOINED 2");
 			}
 			else if(validMovement(yard.getObjectLocation(this))){
 				followEdge();
 				//!111111111111111111
+			}
+			else{
+				state = State.JOINED_SHAPE;
+				isStationary = true;
+				System.out.println("ESTOY EN JOINED 3");
 			}
 		}
 //		else if(state == State.JOINED_SHAPE){
