@@ -19,11 +19,11 @@ public class TRS extends SimState {
 	
 //	public Object space;
 	public Continuous2D yard = new Continuous2D(1.0,100,100);
-	public int numRobots = 10;
+	public int numRobots = 100;
 	public static int robot_width = 2;
-	public double gradientDistance = robot_width + 0.3;
+	public double gradientDistance = robot_width * 2* 1.5;
 	public BufferedImage map;
-	public String imgFile = "prueba1.png";
+	public String imgFile = "shape1.png";
 	
 
 	public TRS(long seed) {
@@ -35,17 +35,6 @@ public class TRS extends SimState {
 	{
 		doLoop(TRS.class, args);
 		System.exit(0);
-		
-//		SimState state = new TRS(System.currentTimeMillis());
-//		state.start();
-//		do
-//			{System.out.println("nuevop ccyle" );
-//			if (!state.schedule.step(state)) break;}
-//		while(state.schedule.getSteps() < 40);
-//		state.finish();
-//		System.exit(0);
-		
-		
 	}
 	
 	private BufferedImage getImage(String filename)
@@ -78,17 +67,29 @@ public class TRS extends SimState {
 	
 	public void start()
 	{
-		super.start();
-		
+		super.start();		
 		yard.clear();
-		
-		
+
+		map = getImage("/resources/" + imgFile);
+//		System.out.println("width " + map.getWidth() + "Height : " + map.getHeight() + " negro " + Color.black.getRGB());
+//		for (int i = 0 ; i < map.getWidth(); i++){
+//			String linea = "";
+//			for (int j = map.getHeight()-1; j >0;  j--){
+//				if( map.getRGB(i, j) == Color.black.getRGB()){
+//					linea+="X";
+//				}
+//				else{
+//					linea +=" ";
+//				}
+//			}
+//			System.out.println(linea);
+//		}
+
 		createRobot(0, true, new Double2D(yard.getWidth() * 0.5 + 0, yard.getHeight() * 0.5 + 0));
 		createRobot(1, true, new Double2D(yard.getWidth() * 0.5 + robot_width, yard.getHeight() * 0.5 ));
 		createRobot(3, true, new Double2D(yard.getWidth() * 0.5 + robot_width/2, yard.getHeight() * 0.5 - robot_width));
 		createRobot(2, true, new Double2D(yard.getWidth() * 0.5 + robot_width/2, yard.getHeight() * 0.5 + robot_width));
-		
-		
+
 		int width = (int)Math.round(Math.sqrt(numRobots - 4));
 
 		for(int i = 0, r = 2; i < numRobots - 4; r++)
@@ -106,8 +107,6 @@ public class TRS extends SimState {
 				break;
 			}
 		}
-		map = getImage("/resources/" + imgFile);
-//		System.out.println(map.getWidth() + " " + map.getHeight());
 		
 	}
 	
@@ -129,11 +128,8 @@ public class TRS extends SimState {
 			robot.localization = new MutableDouble2D(position.getX()-yard.getWidth()*0.5, yard.getHeight()*0.5 - position.getY());
 			robot.isLocalized = true;
 			robot.validGradient = true;
-			
-//			System.out.println("Iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii :: " +  id);
-//			System.out.println("localization :: " + robot.localization);
 		}
-		robot.setOrientation(random.nextDouble() * 4.1888);
+		robot.setOrientation(0.5 * 4.1888);
 	}
 	
 	/**
@@ -145,18 +141,21 @@ public class TRS extends SimState {
 	public boolean isInsideShape(Double2D point, int id)
 	{
 		int x = (int) (point.x - yard.getWidth()*0.5 );
-		int y = (int) ( yard.getHeight()*0.5 - point.y);
-		x = x/TRS.robot_width;
-		y = y /TRS.robot_width;
-//		System.out.println("id :: " + id + "x : "+ x + " y:: "+ y);
+		int y = (int) ( yard.getHeight()*0.5 - point.y );
+//		x = x/TRS.robot_width;
+//		y = map.getHeight() - (y /TRS.robot_width) -1;
+		y = map.getHeight() - y -1;
+//		System.out.println("id :: " + id + "x : "+ x + " y:: "+ y );
 		
-		if (x <= 0 || y <= 0 || x >= map.getWidth() || y >= map.getHeight())
+		if (x <= 0 || y < 0 || x >= map.getWidth() || y >= map.getHeight())
 			return false;
-		else
+		else{
+			System.out.println("Este es el color :: " + map.getRGB(x, y));
 			if (map.getRGB(x, y) == Color.black.getRGB())
 				return true;
 			else 
 				return false;
+		}
 	}
 	
 }
