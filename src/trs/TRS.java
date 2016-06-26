@@ -21,7 +21,7 @@ public class TRS extends SimState {
 	public Continuous2D yard = new Continuous2D(1.0,100,100);
 	public int numRobots = 100;
 	public static int robot_width = 2;
-	public double gradientDistance = robot_width * 2* 1.5;
+	public double gradientDistance = robot_width *  1.5;
 	public BufferedImage map;
 	public String imgFile = "shape1.png";
 	
@@ -120,16 +120,16 @@ public class TRS extends SimState {
 	 */
 	private void createRobot(int id, boolean isSeed, Double2D position){
 		Robot robot = new Robot(id, isSeed);
-		
 		yard.setObjectLocation(robot, position);
-		schedule.scheduleRepeating(robot);
 //		robot.position = new MutableDouble2D(position);
 		if(isSeed){
 			robot.localization = new MutableDouble2D(position.getX()-yard.getWidth()*0.5, yard.getHeight()*0.5 - position.getY());
 			robot.isLocalized = true;
 			robot.validGradient = true;
 		}
-		robot.setOrientation(0.5 * 4.1888);
+//		robot.setOrientation(0.5 * 4.1888);
+		robot.setOrientation(0.5* (2 * robot_width * Math.PI/3 ));
+		schedule.scheduleRepeating(robot);
 	}
 	
 	/**
@@ -150,7 +150,7 @@ public class TRS extends SimState {
 		if (x <= 0 || y < 0 || x >= map.getWidth() || y >= map.getHeight())
 			return false;
 		else{
-			System.out.println("Este es el color :: " + map.getRGB(x, y));
+//			System.out.println("Este es el color :: " + map.getRGB(x, y));
 			if (map.getRGB(x, y) == Color.black.getRGB())
 				return true;
 			else 
