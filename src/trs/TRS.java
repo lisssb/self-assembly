@@ -19,13 +19,20 @@ public class TRS extends SimState {
 	
 //	public Object space;
 	public Continuous2D yard = new Continuous2D(1.0,100,100);
-	public int numRobots = 100;
+	public int numRobots = 300;
 	public static int robot_width = 2;
 	public double gradientDistance = robot_width *  1.5;
 	public BufferedImage map;
 	public String imgFile = "shape1.png";
+	boolean showSystem = false;
 	
+	public void setShowSystem (boolean value){
+		showSystem = value;
+	}
 
+	public boolean getShowSystem (){
+		return showSystem;
+	}
 	public TRS(long seed) {
 		super(seed);
 		// TODO Auto-generated constructor stub

@@ -57,7 +57,7 @@ public class Robot  implements Steppable{
 	public boolean getIfLocalized() {return isLocalized;}
 	public void setOrientation(double o) {orientation = o;}
 	public double orientation2D () {return orientation;}
-	
+
 //	public MutableDouble2D getLocalization() {return localization;}
 
 	public Double2D getRobotPosition (){
@@ -170,6 +170,24 @@ public class Robot  implements Steppable{
 //		System.out.println("---------------------------------------------------");
 		return true;
 	}
+	/**
+	 * 
+	 * @param neighbourhood
+	 * @param gradientValue
+	 * @return the max_id of the a neighbourhood that:
+	 * 		has the same gradient
+	 * 		Is in the state WAIT_TO_MOVE
+	 */
+	private int maxNeighbourIdWithGradientValue (Bag neighbourhood, int gradientValue){
+		int max_id = Integer.MIN_VALUE;
+		for (int i = 0; i < neighbourhood.size(); i++){
+			if(((Robot)neighbourhood.get(i)).id != id && ((Robot)neighbourhood.get(i)).gradientValue == gradientValue
+					&& ((Robot)neighbourhood.get(i)).id > max_id && ((Robot)neighbourhood.get(i)).state == State.WAIT_TO_MOVE){
+				max_id = ((Robot)neighbourhood.get(i)).id;
+			}
+		}
+		return max_id;
+	}
 
 	private void run (){
 		if(state == State.START){
@@ -196,13 +214,9 @@ public class Robot  implements Steppable{
 
 			for(int i = 0; i < neighborhood.size(); i++){
 				current_neighbour = (Robot)neighborhood.get(i);
-
 				if(current_neighbour != this ){
-					if(current_neighbour.validGradient && max_neighbour_gradient <= current_neighbour.gradientValue){
+					if(current_neighbour.validGradient && max_neighbour_gradient <= current_neighbour.gradientValue && current_neighbour.state == State.WAIT_TO_MOVE){
 						max_neighbour_gradient = current_neighbour.gradientValue;
-						if(max_neighbour_id  < current_neighbour.id){
-							max_neighbour_id = current_neighbour.id;
-						}
 					}
 					if (!((Robot)neighborhood.get(i)).isStationary){
 						neighbours_moving = true;
@@ -213,7 +227,7 @@ public class Robot  implements Steppable{
 			
 			if(!neighbours_moving){
 				h = max_neighbour_gradient;
-				
+				max_neighbour_id = maxNeighbourIdWithGradientValue(neighborhood, h);
 				if(validGradient && (gradientValue > h || (gradientValue == h && id > max_neighbour_id))){
 					state = State.MOVE_WHILE_OUTSIDE;
 					startMovingTime = System.currentTimeMillis();
