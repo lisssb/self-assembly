@@ -67,7 +67,7 @@ public class TRSWithUI extends GUIState
 														paint = Color.orange;
 													}
 													else if(robot.state == State.JOINED_SHAPE){
-														paint = Color.blue;
+														paint = Color.black;
 													}
 //													else if (robot.isStationary)
 //														paint = Color.black;
