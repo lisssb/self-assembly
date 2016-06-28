@@ -58,23 +58,23 @@ public class TRSWithUI extends GUIState
 												public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
 												{
 													Robot robot = (Robot)object;
-													if (robot.id==0)
+													if (robot.isSeed && robot.id == 0)
 														paint = Color.pink;
-													else if(robot.id == 1 || robot.id == 2 || robot.id ==3){
+													else if(robot.isSeed && (robot.id == 1 || robot.id == 2 || robot.id ==3)){
 														paint = Color.cyan;
 													}
 													else if(!robot.isStationary){
 														paint = Color.orange;
 													}
 													else if(robot.state == State.JOINED_SHAPE){
-														paint = Color.black;
+														paint = Color.blue;
 													}
 //													else if (robot.isStationary)
 //														paint = Color.black;
 //													else if (!robot.validGradient)
 //														paint = Color.orange;
 													else
-														paint = Color.gray;
+														paint = Color.LIGHT_GRAY;
 													super.draw(object, graphics, info);
 												}
 									
