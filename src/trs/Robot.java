@@ -20,7 +20,9 @@ public class Robot  implements Steppable{
 	State state = State.START;
 	boolean isSeed;
 	boolean validGradient = false;
-	int gradientValue;
+	int gradientValue =Integer.MAX_VALUE;
+	int last_gradient_value = Integer.MIN_VALUE;
+	int steadyGradient = 0;
 	
 	double orientation;
 	public int id;
@@ -56,6 +58,9 @@ public class Robot  implements Steppable{
 	public int getId () {return id;}
 	public boolean getIfLocalized() {return isLocalized;}
 	public void setOrientation(double o) {orientation = o;}
+	public long getTime(){
+		return startMovingTime;
+	}
 
 	
 	public void step(SimState state){
@@ -63,10 +68,9 @@ public class Robot  implements Steppable{
 		yard = swarm.yard;
 		neighborhood = yard.getNeighborsWithinDistance(yard.getObjectLocation(this), TRS.robot_width * 3); // in each step we get the neighboprhood	
 		smallNeighborhood = yard.getNeighborsExactlyWithinDistance(yard.getObjectLocation(this), swarm.gradientDistance );
-		generateId();
+				generateId();
 		run();
 	}
-	
 	/**
 	 * 
 	 * @return Main program used to change the state of the robot, update its position.
@@ -79,10 +83,15 @@ public class Robot  implements Steppable{
 			else {
 				gradientFormation();
 //				localizate_robots();
-//				if(getIfValidGradient() && getIfLocalized()){
-//					state = State.WAIT_TO_MOVE;
-//				}
-				if(allGradientFormation()){
+
+				if(last_gradient_value != gradientValue){
+					steadyGradient = 0;
+					last_gradient_value = gradientValue;
+				}
+				else{
+					steadyGradient+=1;
+				}
+				if(validGradient && steadyGradient > 10 /*&& getIfLocalized()*/){
 					state = State.WAIT_TO_MOVE;
 				}
 			}
@@ -93,6 +102,7 @@ public class Robot  implements Steppable{
 			int max_neighbour_id;
 			int h;
 			Robot current_neighbour;
+//			neighborhood = yard.getNeighborsWithinDistance(yard.getObjectLocation(this), TRS.robot_width * 2); // in each step we get the neighboprhood	
 
 			/**
 			 * Tomo el maximo gradiente de mis vecinos (cuyo gradiente sea válido)
@@ -101,22 +111,24 @@ public class Robot  implements Steppable{
 				current_neighbour = (Robot)neighborhood.get(i);
 				if(current_neighbour != this ){
 					if(current_neighbour.validGradient && max_neighbour_gradient <= current_neighbour.getGradientValue()
-							&& current_neighbour.state == State.WAIT_TO_MOVE){//oara no mirar los joined_shape
+							&& current_neighbour.state != State.JOINED_SHAPE){//oara no mirar los joined_shape
 						max_neighbour_gradient = current_neighbour.getGradientValue();
 					}
-					if (!((Robot)neighborhood.get(i)).isStationary){
+					if (!current_neighbour .isStationary || !current_neighbour.validGradient){
 						neighbours_moving = true;
 					}
 				}
 				
 			}
-			if(!neighbours_moving){
+
+			if(!neighbours_moving && validGradient){
 				h = max_neighbour_gradient;
 				max_neighbour_id = maxNeighbourIdWithGradientValue(h);
-				if(validGradient && (gradientValue > h || (gradientValue == h && id > max_neighbour_id))){
+				if(gradientValue > h || (gradientValue == h && id > max_neighbour_id)){
 					state = State.MOVE_WHILE_OUTSIDE;
 					startMovingTime = System.currentTimeMillis();
 					isStationary = false;
+//					System.out.println(print);
 				}				
 			}
 		}
@@ -129,7 +141,6 @@ public class Robot  implements Steppable{
 			}
 			if(validMovement(nextMovement)){
 				yard.setObjectLocation(this, nextMovement);
-				validGradient = false;
 				gradientFormation();
 			}
 			
@@ -150,10 +161,10 @@ public class Robot  implements Steppable{
 			
 			if(validMovement(nextMovement)){
 				yard.setObjectLocation(this, nextMovement);
-				validGradient = false;
 				gradientFormation();
 			}
 		}
+	
 		return true;
 	}
 	
@@ -169,49 +180,43 @@ public class Robot  implements Steppable{
 					continue;
 				if (((Robot)neighborhood.get(i)).id == id)
 				{
-					id = swarm.random.nextInt();
+					id = swarm.random.nextInt(swarm.numRobots*2);
 					i=0;
 				}
 			}
 		}
 	}
 	
+
+	
 	/**
 	 * Tiene siempre un valor de max a no ser que tengamos vecinos con gradientes ya definidos
 	 */
 	private void gradientFormation()
 	{
-//		Bag smallNeighborhood = yard.getNeighborsWithinDistance(yard.getObjectLocation(this), swarm.gradientDistance);
-		int current_gradient_value = Integer.MAX_VALUE;
 		Robot currentNeighbour;
 		int neighValue;
+		validGradient = false; 
+		
+		
 		for (int i = 0; i < smallNeighborhood.size(); i++)
 		{
 			currentNeighbour = (Robot)smallNeighborhood.get(i);
-			/** si el graidente de mi vecino es valido
-			// si no soy yo
-			// si mi vecino esta quieto**/
-			if (((Robot)smallNeighborhood.get(i)).validGradient && smallNeighborhood.get(i) != this && ((Robot)smallNeighborhood.get(i)).isStationary)
+			if (currentNeighbour.validGradient && currentNeighbour != this && currentNeighbour.isStationary)
 			{
-
-				neighValue = currentNeighbour.getGradientValue();
-				
-				if ( neighValue  < current_gradient_value)
+				neighValue = currentNeighbour.getGradientValue();				
+				if ( neighValue  < gradientValue)
 				{
-					current_gradient_value = neighValue;
+					gradientValue = neighValue;
 					validGradient = true;
 				}
-					
 			}
 		}
-		
-		if(current_gradient_value < Integer.MAX_VALUE){
-			gradientValue = current_gradient_value +1 ;
+		if(gradientValue < Integer.MAX_VALUE){			
+			gradientValue = gradientValue +1 ;
 		}
 	}
 
-
-	
 	/**
 	 * Edge follow nearest neighbor at DESIRED DISTANCE
 	 */
@@ -272,35 +277,22 @@ public class Robot  implements Steppable{
 		nextPosition.addIn(yard.getObjectLocation(this));
 		nextMovement = new Double2D(nextPosition);
 	}
-	
-	/**
-	 * 
-	 * @return true if all the robots has a valid gradient Formation
-	 */
-	private boolean allGradientFormation (){
-		Bag objects = yard.getAllObjects();
-		for (int i = 0; i < objects.size(); i ++){
-			if(!((Robot)objects.get(i)).validGradient){
-				return false;
-			}
-		}
-		return true;
-	}
-	
+
 	/**
 	 * 
 	 * @param neighbourhood
 	 * @param gradientValue
 	 * @return the max_id of the a neighbourhood that:
 	 * 		has the same gradient
-	 * 		Is in the state WAIT_TO_MOVE
+	 * 		If it is not in the state JOINED_SHAPE
 	 */
 	private int maxNeighbourIdWithGradientValue (int gradientValue){
 		int max_id = Integer.MIN_VALUE;
 		for (int i = 0; i < neighborhood.size(); i++){
 			if(((Robot)neighborhood.get(i)).id != id && ((Robot)neighborhood.get(i)).gradientValue == gradientValue
 					&& ((Robot)neighborhood.get(i)).id > max_id 
-					&& ((Robot)neighborhood.get(i)).state == State.WAIT_TO_MOVE){
+					&& ((Robot)neighborhood.get(i)).state != State.JOINED_SHAPE
+					&& ((Robot)neighborhood.get(i)).validGradient){
 				max_id = ((Robot)neighborhood.get(i)).id;
 			}
 		}
@@ -357,8 +349,9 @@ public class Robot  implements Steppable{
 				continue;
 			// si mi vecino esta antes que mi y me voy a chocar entonces espero
 			if ( ((Robot)neighbors.get(i)).startMovingTime < startMovingTime &&
-					thereIsCollision( yard.getObjectLocation(neighbors.get(i)) , yard.getObjectLocation(this)))
+					thereIsCollision( yard.getObjectLocation(neighbors.get(i)) , new Double2D(nextPosition.getX(), nextPosition.getY()))){
 				return false;
+			}
 		}
 		return true;
 	}

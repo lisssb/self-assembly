@@ -24,7 +24,7 @@ public class TRS extends SimState {
 	public static int robot_width = 3;
 	public static double gradientDistance = robot_width *  1.2;
 	public BufferedImage map;
-	public String imgFile = "kk.png";
+	public String imgFile = "star.png";
 //	boolean showSystem = false;
 //	
 //	public void setShowSystem (boolean value){
