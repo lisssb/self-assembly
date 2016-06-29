@@ -68,7 +68,10 @@ public class Robot  implements Steppable{
 		yard = swarm.yard;
 		neighborhood = yard.getNeighborsWithinDistance(yard.getObjectLocation(this), TRS.robot_width * 3); // in each step we get the neighboprhood	
 		smallNeighborhood = yard.getNeighborsExactlyWithinDistance(yard.getObjectLocation(this), swarm.gradientDistance );
-				generateId();
+				
+		if(isSeed) return;
+		generateId();
+		gradientFormation();
 		run();
 	}
 	/**
@@ -81,17 +84,17 @@ public class Robot  implements Steppable{
 				state = State.JOINED_SHAPE;
 			}
 			else {
-				gradientFormation();
+//				gradientFormation();
 //				localizate_robots();
 
-				if(last_gradient_value != gradientValue){
-					steadyGradient = 0;
-					last_gradient_value = gradientValue;
-				}
-				else{
-					steadyGradient+=1;
-				}
-				if(validGradient && steadyGradient > 10 /*&& getIfLocalized()*/){
+//				if(last_gradient_value != gradientValue){
+//					steadyGradient = 0;
+//					last_gradient_value = gradientValue;
+//				}
+//				else{
+//					steadyGradient+=1;
+//				}
+				if(validGradient /*&& steadyGradient > 10*/ /*&& getIfLocalized()*/){
 					state = State.WAIT_TO_MOVE;
 				}
 			}
@@ -141,7 +144,7 @@ public class Robot  implements Steppable{
 			}
 			if(validMovement(nextMovement)){
 				yard.setObjectLocation(this, nextMovement);
-				gradientFormation();
+//				gradientFormation();
 			}
 			
 		}
@@ -161,7 +164,7 @@ public class Robot  implements Steppable{
 			
 			if(validMovement(nextMovement)){
 				yard.setObjectLocation(this, nextMovement);
-				gradientFormation();
+//				gradientFormation();
 			}
 		}
 	
