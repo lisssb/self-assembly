@@ -12,11 +12,11 @@ import sim.util.MutableDouble2D;
 
 public class Robot  implements Steppable{
 
-	public MutableDouble2D position = new MutableDouble2D(0.0, 0.0);
+	public Double2D position = new Double2D(0.0, 0.0);
 	double prev = Double.MAX_VALUE;
 	double current = Double.MAX_VALUE;
 	public MutableDouble2D localization;
-	boolean isLocalized = true; // esto se tiene que cambiar
+	boolean isLocalized = false;
 	State state = State.START;
 	boolean isSeed;
 	boolean validGradient = false;
@@ -70,8 +70,20 @@ public class Robot  implements Steppable{
 		smallNeighborhood = yard.getNeighborsExactlyWithinDistance(yard.getObjectLocation(this), swarm.gradientDistance );
 				
 		if(isSeed) return;
+		position = yard.getObjectLocation(this);
+		
+		
+		boolean moved;
+		if(position != yard.getObjectLocation(this)) moved = true;
+		else moved = false;		
+		position = yard.getObjectLocation(this);
+		if(moved){
+			validGradient = false;
+		}
+		
 		generateId();
 		gradientFormation();
+//		localizate_robots();
 		run();
 	}
 	/**
@@ -194,7 +206,7 @@ public class Robot  implements Steppable{
 	{
 		Robot currentNeighbour;
 		int neighValue;
-		validGradient = false; 
+//		validGradient = false; 
 		
 		
 		for (int i = 0; i < smallNeighborhood.size(); i++)
@@ -372,21 +384,43 @@ public class Robot  implements Steppable{
 	 * @param neigbours
 	 * @return say if the a neighbourhood exist 3 collinear points
 	 */	
-	static private boolean has3NoCollinearNeighbours (Bag neigbours){
+//	static private boolean has3NoCollinearNeighbours (Bag neigbours){
+//		int length = neigbours.size();
+//		for (int i = 0; i < length - 2; i++){
+//			for (int j = i +1; j < length - 1; j++){
+//				for (int z = j +1; z < length; z++){
+//					if(!isCollinear(((Robot)neigbours.get(i)).localization, ((Robot)neigbours.get(j)).localization, ((Robot)neigbours.get(z)).localization)){
+//						return true;
+//					}
+//				}
+//			}			
+//		}
+//		return false;
+//	}
+
+	private boolean has3NoCollinearNeighbours (Bag neigbours){
 		int length = neigbours.size();
+		if(length < 3) return false;
 		for (int i = 0; i < length - 2; i++){
 			for (int j = i +1; j < length - 1; j++){
 				for (int z = j +1; z < length; z++){
-					if(!isCollinear(((Robot)neigbours.get(i)).localization, ((Robot)neigbours.get(j)).localization, ((Robot)neigbours.get(z)).localization)){
-						return true;
+					if(i != j && i != z && j != z
+							&& (Robot)neigbours.get(i) != this
+							&& (Robot)neigbours.get(j) != this
+							&& (Robot)neigbours.get(z) != this
+							){
+						if(!isCollinear(((Robot)neigbours.get(i)).localization,
+								((Robot)neigbours.get(j)).localization,
+								((Robot)neigbours.get(z)).localization)){
+							return true;
+						}
 					}
 				}
-			}			
+			}
 		}
 		return false;
 	}
 
-	
 	private void localizate_robots(){
 		Bag localized = new Bag();
 		MutableDouble2D position_me = new MutableDouble2D(0,0);
@@ -402,7 +436,7 @@ public class Robot  implements Steppable{
 		}
 		if(has3NoCollinearNeighbours(localized) ){
 
-			for(int j = localized.size(), l = 0; j > 0; j --, l++){
+			for(int  l = 0; l < localized.size(); l++){
 				double measured_distance = TRS.getDistance(yard.getObjectLocation(this), yard.getObjectLocation(localized.get(l)));
 				double c = TRS.getDistance(position_me, ((Robot)localized.get(l)).localization);	
 				if(c == 0){

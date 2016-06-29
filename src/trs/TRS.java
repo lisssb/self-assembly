@@ -24,7 +24,7 @@ public class TRS extends SimState {
 	public static int robot_width = 3;
 	public static double gradientDistance = robot_width *  1.2;
 	public BufferedImage map;
-	public String imgFile = "star.png";
+	public String imgFile = "kk.png";
 //	boolean showSystem = false;
 //	
 //	public void setShowSystem (boolean value){
@@ -136,12 +136,22 @@ public class TRS extends SimState {
 		yard.setObjectLocation(robot, position);
 //		robot.position = new MutableDouble2D(position);
 		if(isSeed){
-			robot.localization = new MutableDouble2D(position.getX()-yard.getWidth()*0.5, yard.getHeight()*0.5 - position.getY());
+//			if(id == 0){
+//				robot.localization = new MutableDouble2D(-robot_width/2, -robot_width);
+//			}
+//			if(id == 1){
+//				robot.localization = new MutableDouble2D(robot_width/2, -robot_width);
+//			}
+//			if(id == 2){
+//				robot.localization = new MutableDouble2D(0, -  2 * robot_width);
+//			}
+//			if(id == 3){
+//				robot.localization = new MutableDouble2D(0,0);
+//			}
 			robot.isLocalized = true;
 			robot.validGradient = true;
 			robot.id = id;
 		}
-//		robot.setOrientation(0.5 * 4.1888);
 		robot.setOrientation(robot_width * Math.PI/3);
 		schedule.scheduleRepeating(robot);
 	}
