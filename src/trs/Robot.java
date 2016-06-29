@@ -79,24 +79,19 @@ public class Robot  implements Steppable{
 	 * @return Main program used to change the state of the robot, update its position.
 	 */
 	private boolean run (){
-		if(state == State.START){
-			if(isSeed){
-				state = State.JOINED_SHAPE;
-			}
-			else {
-//				gradientFormation();
-//				localizate_robots();
+		if (state == State.START) {
+			// gradientFormation();
+			// localizate_robots();
 
-//				if(last_gradient_value != gradientValue){
-//					steadyGradient = 0;
-//					last_gradient_value = gradientValue;
-//				}
-//				else{
-//					steadyGradient+=1;
-//				}
-				if(validGradient /*&& steadyGradient > 10*/ /*&& getIfLocalized()*/){
-					state = State.WAIT_TO_MOVE;
-				}
+			// if(last_gradient_value != gradientValue){
+			// steadyGradient = 0;
+			// last_gradient_value = gradientValue;
+			// }
+			// else{
+			// steadyGradient+=1;
+			// }
+			if (validGradient /* && steadyGradient > 10 */ /* && getIfLocalized() */) {
+				state = State.WAIT_TO_MOVE;
 			}
 		}
 		else if(state == State.WAIT_TO_MOVE){
