@@ -21,7 +21,7 @@ public class TRS extends SimState {
 	public static int robot_id = 4;
 	public Continuous2D yard = new Continuous2D(1.0,170,170);
 	public int numRobots = 350;
-	public static int robot_width = 3;
+	public static double robot_width = 3;
 	public static double gradientDistance = robot_width *  1.2;
 	public BufferedImage map;
 	public String imgFile = "kk.png";
@@ -136,18 +136,18 @@ public class TRS extends SimState {
 		yard.setObjectLocation(robot, position);
 //		robot.position = new MutableDouble2D(position);
 		if(isSeed){
-//			if(id == 0){
-//				robot.localization = new MutableDouble2D(-robot_width/2, -robot_width);
-//			}
-//			if(id == 1){
-//				robot.localization = new MutableDouble2D(robot_width/2, -robot_width);
-//			}
-//			if(id == 2){
-//				robot.localization = new MutableDouble2D(0, -  2 * robot_width);
-//			}
-//			if(id == 3){
-//				robot.localization = new MutableDouble2D(0,0);
-//			}
+			if(id == 3){
+				robot.localization = new MutableDouble2D(-robot_width/2, robot_width);
+			}
+			if(id == 0){
+				robot.localization = new MutableDouble2D(-robot_width, 0);
+			}
+			if(id == 2){
+				robot.localization = new MutableDouble2D(-robot_width/2, - robot_width);
+			}
+			if(id == 1){
+				robot.localization = new MutableDouble2D(0,0);
+			}
 			robot.isLocalized = true;
 			robot.validGradient = true;
 			robot.id = id;

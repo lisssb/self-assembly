@@ -15,7 +15,7 @@ public class Robot  implements Steppable{
 	public Double2D position = new Double2D(0.0, 0.0);
 	double prev = Double.MAX_VALUE;
 	double current = Double.MAX_VALUE;
-	public MutableDouble2D localization;
+	public MutableDouble2D localization = new MutableDouble2D(0,0);
 	boolean isLocalized = false;
 	State state = State.START;
 	boolean isSeed;
@@ -39,7 +39,7 @@ public class Robot  implements Steppable{
 	
 	public Robot(int id, boolean isSeed) {
 		// TODO Auto-generated constructor stub
-//		this.id = id;
+		this.id = id;
 		this.isSeed = isSeed;
 		if(isSeed){
 			if(this.id == 0){
@@ -61,7 +61,9 @@ public class Robot  implements Steppable{
 	public long getTime(){
 		return startMovingTime;
 	}
-
+	public MutableDouble2D getPosition(){
+		return localization;
+	}
 	
 	public void step(SimState state){
 		swarm = (TRS) state;
@@ -81,9 +83,9 @@ public class Robot  implements Steppable{
 			validGradient = false;
 		}
 		
-		generateId();
+//		generateId();
 		gradientFormation();
-//		localizate_robots();
+		localizate_robots();
 		run();
 	}
 	/**
@@ -423,36 +425,49 @@ public class Robot  implements Steppable{
 
 	private void localizate_robots(){
 		Bag localized = new Bag();
-		MutableDouble2D position_me = new MutableDouble2D(0,0);
+		MutableDouble2D position_me = localization;
 		Double2D v;
+		Robot current_neighbor;
+		neighborhood = yard.getNeighborsWithinDistance(yard.getObjectLocation(this), TRS.robot_width * 2); // in each step we get the neighboprhood	
+
 
 
 		for (int i = 0; i < neighborhood.size(); i++)
 		{
-			if (!((Robot)neighborhood.get(i)).isStationary ||  neighborhood.get(i) == this || !(((Robot)neighborhood.get(i)).isLocalized))
+			current_neighbor = (Robot)neighborhood.get(i);
+			if (!current_neighbor.isStationary ||  neighborhood.get(i) == this || !current_neighbor.isLocalized)
 				continue;
 			else
 				localized.add(neighborhood.get(i));
 		}
+		if(id == 4)
+			System.out.println("Size " + neighborhood.size());
+
 		if(has3NoCollinearNeighbours(localized) ){
 
 			for(int  l = 0; l < localized.size(); l++){
-				double measured_distance = TRS.getDistance(yard.getObjectLocation(this), yard.getObjectLocation(localized.get(l)));
-				double c = TRS.getDistance(position_me, ((Robot)localized.get(l)).localization);	
+				current_neighbor = (Robot)localized.get(l);
+				
+				double measured_distance = TRS.getDistance(yard.getObjectLocation(this), yard.getObjectLocation(current_neighbor));
+				double c = TRS.getDistance(position_me, current_neighbor.localization);	
+				if (id == 4|| id ==26)
+					System.out.println("Soy " + id + " y mi vcino es " + current_neighbor.id + " c " + c);
 				if(c == 0){
 					v = new Double2D(0,0);
 				}
 				else{
-					v = new Double2D((position_me.getX() - ((Robot)localized.get(l)).localization.getX())/c,
-							(position_me.getY() - ((Robot)localized.get(l)).localization.getY())/c);
+					v = new Double2D((position_me.getX() -current_neighbor.localization.getX())/c,
+							(position_me.getY() - current_neighbor.localization.getY())/c);
 				}
-				Double2D n = new Double2D ( ((Robot)localized.get(l)).localization.getX() + measured_distance * v.getX(), 
-						((Robot)localized.get(l)).localization.getY() + measured_distance * v.getY());
+				Double2D n = new Double2D ( current_neighbor.localization.getX() + measured_distance * v.getX(), 
+						current_neighbor.localization.getY() + measured_distance * v.getY());
 				position_me.setTo(position_me.getX() - (position_me.getX() - n.getX())/4, position_me.getY() - (position_me.getY() - n.getY())/4);
 			}
 
 			localization = position_me;
-			if (validGradient) isLocalized = true;
+			if (localization.getX() == 0 && localization.getY() == 0) isLocalized = false;
+			else
+				isLocalized = true;
 
 		}
 	}
