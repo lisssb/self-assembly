@@ -66,7 +66,7 @@ public class Robot  implements Steppable{
 	public void step(SimState state){
 		swarm = (TRS) state;
 		yard = swarm.yard;
-		neighborhood = yard.getNeighborsWithinDistance(yard.getObjectLocation(this), TRS.robot_width * 3); // in each step we get the neighboprhood	
+		neighborhood = yard.getNeighborsWithinDistance(yard.getObjectLocation(this), 10); // in each step we get the neighboprhood	
 		smallNeighborhood = yard.getNeighborsExactlyWithinDistance(yard.getObjectLocation(this), swarm.gradientDistance );
 				
 		if(isSeed) return;
