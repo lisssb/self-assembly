@@ -355,10 +355,10 @@ public class Robot  implements Steppable{
 		
 		for (int i = 0; i < neighbors.size(); i++)
 		{
-			if (neighbors.get(i) == this || ((Robot)neighbors.get(i)).isStationary) // the algoritm check collision betwwen edge follow robots
+			if (neighbors.get(i) == this /*|| ((Robot)neighbors.get(i)).isStationary*/) // the algoritm check collision betwwen edge follow robots
 				continue;
 			// si mi vecino esta antes que mi y me voy a chocar entonces espero
-			if ( ((Robot)neighbors.get(i)).startMovingTime < startMovingTime &&
+			if ((  ((Robot)neighbors.get(i)).isStationary ||      ((Robot)neighbors.get(i)).startMovingTime < startMovingTime )&&
 					thereIsCollision( yard.getObjectLocation(neighbors.get(i)) , new Double2D(nextPosition.getX(), nextPosition.getY()))){
 				return false;
 			}
