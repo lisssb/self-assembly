@@ -96,7 +96,7 @@ public class TRSWithUI extends GUIState
 	public void init(Controller c)
 	{
 		super.init(c);
-		display = new Display2D(600,600,this);
+		display = new Display2D(900,900,this);
 		display.setClipping(false);
 		displayFrame = display.createFrame();
 		displayFrame.setTitle("Thousand-robot swarm");

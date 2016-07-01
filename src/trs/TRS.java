@@ -20,11 +20,11 @@ public class TRS extends SimState {
 //	public Object space;
 	public static int robot_id = 4;
 	public Continuous2D yard = new Continuous2D(1.0,170,170);
-	public int numRobots = 200;
+	public int numRobots = 1000;
 	public static int robot_width = 3;
 	public static double gradientDistance = robot_width *  1.2;
 	public BufferedImage map;
-	public String imgFile = "star.png";
+	public String imgFile = "llave.png";
 //	boolean showSystem = false;
 //	
 //	public void setShowSystem (boolean value){
