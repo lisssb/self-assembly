@@ -83,7 +83,9 @@ public class Robot  implements Steppable{
 		
 		generateId();
 		gradientFormation();
-//		localizate_robots();
+//		if(!isStationary){
+//			localizate_robots();
+//		}
 		run();
 	}
 	/**
